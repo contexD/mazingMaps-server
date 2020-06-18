@@ -17,51 +17,19 @@ module.exports = {
         }
       )
       .then(() => {
-        return queryInterface
-          .addColumn(
-            "vertices", //source model
-            "graphId", //name of foreign key which is added
-            {
-              type: Sequelize.INTEGER,
-              references: {
-                model: "graphs", //target model
-                key: "id", //key in target model
-              },
-              onUpdate: "CASCADE",
-              onDelete: "SET NULL",
-            }
-          )
-          .then(() => {
-            return queryInterface
-              .addColumn(
-                "edges", //source model
-                "source", //name of foreign key which is added
-                {
-                  type: Sequelize.INTEGER,
-                  references: {
-                    model: "vertices", //target model
-                    key: "id", //key in target model
-                  },
-                  onUpdate: "CASCADE",
-                  onDelete: "SET NULL",
-                }
-              )
-              .then(() =>
-                queryInterface.addColumn(
-                  "edges", //source model
-                  "target", //name of foreign key which is added
-                  {
-                    type: Sequelize.INTEGER,
-                    references: {
-                      model: "vertices", //target model
-                      key: "id", //key in target model
-                    },
-                    onUpdate: "CASCADE",
-                    onDelete: "SET NULL",
-                  }
-                )
-              );
-          });
+        return queryInterface.addColumn(
+          "vertices", //source model
+          "graphId", //name of foreign key which is added
+          {
+            type: Sequelize.INTEGER,
+            references: {
+              model: "graphs", //target model
+              key: "id", //key in target model
+            },
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL",
+          }
+        );
       });
   },
 
@@ -72,11 +40,7 @@ module.exports = {
         "userId" //key to remove
       )
       .then(() => {
-        return queryInterface.removeColumn("vertices", "graphId").then(() => {
-          return queryInterface.removeColumn("edges", "source").then(() => {
-            return queryInterface.removeColumn("edges", "target");
-          });
-        });
+        return queryInterface.removeColumn("vertices", "graphId");
       });
   },
 };

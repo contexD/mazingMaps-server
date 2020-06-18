@@ -9,7 +9,18 @@ module.exports = (sequelize, DataTypes) => {
   );
   vertex.associate = function (models) {
     vertex.belongsTo(models.graph);
-    vertex.hasMany(models.edge);
+    vertex.belongsToMany(models.vertex, {
+      as: "targets",
+      through: "edges",
+      foreignKey: "sourceId",
+      otherKey: "targetId",
+    });
+    vertex.belongsToMany(models.vertex, {
+      as: "sources",
+      through: "edges",
+      foreignKey: "targetId",
+      otherKey: "sourceId",
+    });
   };
   return vertex;
 };
