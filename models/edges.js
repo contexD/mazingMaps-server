@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
     {}
   );
   edges.associate = function (models) {
-    edges.belongsTo(models.vertex);
-    edges.belongsTo(models.vertex);
+    edges.belongsTo(models.vertex, { as: "source" });
+    edges.belongsTo(models.vertex, { as: "target" });
   };
   return edges;
 };
