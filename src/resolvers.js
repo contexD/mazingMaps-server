@@ -2,6 +2,9 @@ const bcrypt = require("bcryptjs");
 
 const resolvers = {
   Query: {
+    me: (root, args, { me }) => {
+      return me;
+    },
     /* resolvers for "all" queries */
     async allUsers(root, args, { models }) {
       return models.user.findAll();
@@ -12,23 +15,18 @@ const resolvers = {
     async allVertices(root, args, { models }) {
       return models.vertex.findAll();
     },
-    async allEdges(root, args, { models }) {
-      return models.edge.findAll();
-    },
-    /* resolvers for "single" queries */
+    /* resolvers for "single queries" */
     async user(root, { id }, { models }) {
-      return models.user.findById(id);
+      return models.user.findByPk(id);
     },
     async graph(root, { id }, { models }) {
-      return models.graph.findById(id);
+      return models.graph.findByPk(id);
     },
     async vertex(root, { id }, { models }) {
-      return models.vertex.findById(id);
-    },
-    async edge(root, { id }, { models }) {
-      return models.edge.findById(id);
+      return models.vertex.findByPk(id);
     },
   },
+  /* resolvers for CRUD functionality */
   Mutation: {
     async createUser(
       root,
@@ -42,6 +40,12 @@ const resolvers = {
         password: await bcrypt.hash(password, 10),
       });
     },
+    async updateEmail(root, { id, email }, { models }) {
+      return models.user.findByPk(id).then((user) => user.update({ email }));
+    },
+    async deleteUser(root, { id }, { models }) {
+      return models.user.findByPk(id).then((user) => user.destroy());
+    },
     async createGraph(root, { name, userId }, { models }) {
       return models.graph.create({
         name,
@@ -54,29 +58,34 @@ const resolvers = {
         graphId,
       });
     },
-    async createEdge(root, { source, target }, { models }) {
-      return models.edge.create({
-        source,
-        target,
-      });
+    async addTarget(root, { vertexId, targetId }, { models }) {
+      return models.edges
+        .create({
+          sourceId: vertexId,
+          targetId,
+        })
+        .then((edge) => edge.getSource());
+    },
+  },
+  User: {
+    async graphs(user) {
+      return user.getGraphs();
     },
   },
   Graph: {
     async user(graph) {
       return graph.getUser();
     },
+    async vertices(graph) {
+      return graph.getVertices();
+    },
   },
   Vertex: {
+    async targets(vertex) {
+      return vertex.getTargets();
+    },
     async graph(vertex) {
       return vertex.getGraph();
-    },
-  },
-  Edge: {
-    async source(vertex) {
-      return vertex.getSource();
-    },
-    async target(vertex) {
-      return vertex.getTarget();
     },
   },
 };

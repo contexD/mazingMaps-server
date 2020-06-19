@@ -2,49 +2,57 @@ const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
   type Query {
-    allUsers: [User!]!
-    allGraphs: [Graph!]!
-    allVertices: [Vertex!]!
-    allEdges: [Edge!]!
-    user(id: Int!): User
-    graph(id: Int!): Graph
-    vertex(id: Int!): Vertex
-    edge(id: Int!): Edge
+    me: User
+    allUsers: [User!]
+    allGraphs: [Graph!]
+    allVertices: [Vertex!]
+    user(id: ID!): User
+    graph(id: ID!): Graph
+    vertex(id: ID!): Vertex
   }
 
   type Mutation {
     createUser(
-      id: Int!
       email: String!
       firstName: String!
       lastName: String!
       password: String!
     ): User!
-    createGraph(id: Int!, name: String!, userId: Int!): Graph!
-    createVertex(id: Int!, data: String!, graphId: Int!): Vertex!
-    createEdge(id: Int!, source: Int!, target: Int!): Edge!
+    updateEmail(id: ID!, email: String!): User!
+    deleteUser(id: ID!): Boolean!
+    createGraph(name: String!, userId: ID!): Graph!
+    updateGraphName(id: ID!, name: String!): Graph!
+    deleteGraph(id: ID!): Graph!
+    createVertex(data: String!, graphId: ID!): Vertex!
+    updateVertexData(id: ID!, data: String!): Vertex!
+    deleteVertex(id: ID!): Vertex!
+    addTarget(vertexId: ID!, targetId: ID!): Vertex!
+    removeTarget(vertexId: ID!, targetId: ID!): Vertex!
   }
 
   type User {
     id: Int!
+    email: String!
     firstName: String!
     lastName: String!
+    graphs: [Graph!]!
   }
 
   type Graph {
     id: Int!
     name: String!
     user: User!
+    vertices: [Vertex!]!
   }
 
   type Vertex {
     id: Int!
     data: String!
+    targets: [Vertex!]!
     graph: Graph!
   }
 
   type Edge {
-    id: Int!
     source: Vertex!
     target: Vertex!
   }
