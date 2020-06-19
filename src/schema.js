@@ -31,18 +31,18 @@ const typeDefs = gql`
   }
 
   type User {
-    id: Int!
+    id: ID!
     email: String!
     firstName: String!
     lastName: String!
-    graphs: [Graph!]!
+    graphs: [Graph!]
   }
 
   type Graph {
     id: Int!
     name: String!
     user: User!
-    vertices: [Vertex!]!
+    vertices: [Vertex!]
   }
 
   type Vertex {
