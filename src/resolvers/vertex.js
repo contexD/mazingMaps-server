@@ -16,13 +16,7 @@ const vertexResolvers = {
       });
     },
     async updateVertexData(root, { id, data }, { models }) {
-      const updatedVertex = await models.vertex
-        .findByPk(id)
-        .then((graph) => graph.update({ data }));
-
-      console.log("\n updatedVertex \n", updatedVertex);
-
-      return updatedVertex;
+      return models.vertex.findByPk(id).then((graph) => graph.update({ data }));
     },
     async deleteVertex(root, { id }, { models }) {
       const row = models.vertex.findByPk(id).then((vertex) => vertex.destroy());

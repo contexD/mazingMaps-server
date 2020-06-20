@@ -1,12 +1,8 @@
 const { gql } = require("apollo-server-express");
 
 const edgeSchema = gql`
-  extend type Query {
-
-  }
-
   extend type Mutation {
-    createEdge(sourceId: ID!, targetId: ID!): Vertex!
+    createEdge(sourceId: ID!, targetId: ID!): Edge!
     deleteEdge(sourceId: ID!, targetId: ID!): Boolean!
   }
 

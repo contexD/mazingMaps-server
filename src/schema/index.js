@@ -1,4 +1,4 @@
-import { gql } from "apollo-server-express";
+const { gql } = require("apollo-server-express");
 
 const userSchema = require("./user");
 const graphSchema = require("./graph");

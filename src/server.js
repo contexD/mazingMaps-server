@@ -8,8 +8,8 @@ const port = 4000;
 
 app.use(cors());
 
-const typeDefs = require("./schema");
-const resolvers = require("./resolvers");
+const typeDefs = require("./schema/index");
+const resolvers = require("./resolvers/index");
 
 //hard-coded user
 const me = {
@@ -28,5 +28,7 @@ const server = new ApolloServer({
 server.applyMiddleware({ app });
 
 app.listen({ port }, () =>
-  console.log(`Server ready at http://localhost:${port}${server.graphqlPath}`)
+  console.log(
+    `💥 Server ready at http://localhost:${port}${server.graphqlPath}`
+  )
 );

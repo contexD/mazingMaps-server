@@ -27,7 +27,7 @@ module.exports = {
               key: "id", //key in target model
             },
             onUpdate: "CASCADE",
-            onDelete: "SET NULL",
+            onDelete: "CASCADE",
           }
         );
       });

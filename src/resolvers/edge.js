@@ -8,7 +8,9 @@ const edgeResolvers = {
           sourceId,
           targetId,
         })
-        .then((edge) => edge.getSource());
+        .then((edge) => {
+          return { source: edge.getSource(), target: edge.getTarget() };
+        });
     },
     async deleteEdge(root, { sourceId, targetId }, { models }) {
       const row = models.edges
