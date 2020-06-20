@@ -10,8 +10,6 @@ const vertexSchema = gql`
     createVertex(data: String!, graphId: ID!): Vertex!
     updateVertexData(id: ID!, data: String!): Vertex!
     deleteVertex(id: ID!): Boolean!
-    addTarget(vertexId: ID!, targetId: ID!): Vertex!
-    removeTarget(vertexId: ID!, targetId: ID!): Boolean!
   }
 
   type Vertex {
