@@ -8,14 +8,18 @@ const userSchema = gql`
   }
 
   extend type Mutation {
-    createUser(
+    signUp(
       email: String!
       firstName: String!
       lastName: String!
       password: String!
-    ): User!
+    ): Token!
     updateEmail(id: ID!, email: String!): User!
     deleteUser(id: ID!): Boolean!
+  }
+
+  type Token {
+    token: String!
   }
 
   type User {

@@ -1,5 +1,3 @@
-const bcrypt = require("bcryptjs");
-
 const userResolvers = {
   Query: {
     me: (root, args, { me }) => {
@@ -11,24 +9,22 @@ const userResolvers = {
   },
 
   Mutation: {
-    async createUser(
-      root,
-      { firstName, lastName, email, password },
-      { models }
-    ) {
-      return models.user.create({
+    async signUp(root, { firstName, lastName, email, password }, { models }) {
+      const user = models.user.create({
         firstName,
         lastName,
         email,
-        password: await bcrypt.hash(password, 10),
+        password,
       });
+
+      return { token: createToken(user) };
     },
     async updateEmail(root, { id, email }, { models }) {
       return models.user.findByPk(id).then((user) => user.update({ email }));
     },
     async deleteUser(root, { id }, { models }) {
       const row = models.user.findByPk(id).then((user) => user.destroy());
-      return (!row.length);
+      return !row.length;
     },
   },
 
