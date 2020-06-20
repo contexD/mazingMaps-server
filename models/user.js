@@ -5,13 +5,34 @@ module.exports = (sequelize, DataTypes) => {
     {
       firstName: { type: DataTypes.STRING, allowNull: false },
       lastName: { type: DataTypes.STRING, allowNull: false },
-      email: { type: DataTypes.STRING, allowNull: false },
-      password: { type: DataTypes.STRING, allowNull: false },
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+          isEmail: true,
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
+      },
     },
     {}
   );
+
   user.associate = function (models) {
     user.hasMany(models.graph);
   };
+
+  user.findByLogin = async (login) => {
+    const result = await user.findOne({ where: { email: login } });
+    return result;
+  };
+
   return user;
 };

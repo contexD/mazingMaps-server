@@ -3,7 +3,13 @@ module.exports = (sequelize, DataTypes) => {
   const graph = sequelize.define(
     "graph",
     {
-      name: { type: DataTypes.STRING, allowNull: false },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
+      },
     },
     {}
   );
