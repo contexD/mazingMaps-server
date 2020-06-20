@@ -17,6 +17,12 @@ const linkSchema = gql`
   type Subscription {
     _: Boolean
   }
+
+  interface MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+  }
 `;
 
 module.exports = [

@@ -8,21 +8,16 @@ const port = 4000;
 
 app.use(cors());
 
-const typeDefs = require("./schema/index");
-const resolvers = require("./resolvers/index");
-
-//hard-coded user
-const me = {
-  id: 1,
-  firstName: "test",
-  lastName: "test",
-  email: "test@test.com",
-};
+const typeDefs = require("./schema/");
+const resolvers = require("./resolvers/");
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: { models, me },
+  context: async () => ({
+    models,
+    me: await models.user.findByLogin("test@test.com"),
+  }),
 });
 
 server.applyMiddleware({ app });
