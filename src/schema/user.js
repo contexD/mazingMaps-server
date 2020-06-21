@@ -14,6 +14,7 @@ const userSchema = gql`
       lastName: String!
       password: String!
     ): Token!
+    signIn(login: String!, password: String!): Token!
     updateEmail(id: ID!, email: String!): User!
     deleteUser(id: ID!): Boolean!
   }

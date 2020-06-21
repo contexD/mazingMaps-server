@@ -1,4 +1,5 @@
 const cors = require("cors");
+require("dotenv/config");
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const models = require("../models");
@@ -17,6 +18,7 @@ const server = new ApolloServer({
   context: async () => ({
     models,
     me: await models.user.findByLogin("test@test.com"),
+    secret: process.env.SECRET,
   }),
 });
 
