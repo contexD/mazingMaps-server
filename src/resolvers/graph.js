@@ -1,27 +1,53 @@
+const { combineResolvers } = require("graphql-resolvers");
+const { isAuthenticated, isGraphOwner } = require("./authorization");
+
 const graphResolvers = {
   Query: {
-    async allGraphs(root, args, { models }) {
-      return models.graph.findAll();
-    },
-    async graph(root, { id }, { models }) {
-      return models.graph.findByPk(id);
-    },
+    allGraphs: combineResolvers(
+      isAuthenticated,
+      async (root, args, { models, me }) => {
+        return models.graph.findAll({ where: { userId: me.id } });
+      }
+    ),
+
+    graph: combineResolvers(
+      isAuthenticated,
+      isGraphOwner,
+      async (root, { id }, { models, me }) => {
+        return models.graph.findByPk(id);
+      }
+    ),
   },
 
   Mutation: {
-    async createGraph(root, { name, userId }, { models }) {
-      return models.graph.create({
-        name,
-        userId,
-      });
-    },
-    async updateGraphName(root, { id, name }, { models }) {
-      return models.graph.findByPk(id).then((graph) => graph.update({ name }));
-    },
-    async deleteGraph(root, { id }, { models }) {
-      const row = models.graph.findByPk(id).then((graph) => graph.destroy());
-      return !row.length;
-    },
+    createGraph: combineResolvers(
+      isAuthenticated,
+      async (root, { name }, { models, me }) => {
+        return models.graph.create({
+          name,
+          userId: me.id,
+        });
+      }
+    ),
+
+    updateGraphName: combineResolvers(
+      isAuthenticated,
+      isGraphOwner,
+      async (root, { id, name }, { models }) => {
+        return models.graph
+          .findByPk(id)
+          .then((graph) => graph.update({ name }));
+      }
+    ),
+
+    deleteGraph: combineResolvers(
+      isAuthenticated,
+      isGraphOwner,
+      async (root, { id }, { models }) => {
+        const row = models.graph.findByPk(id).then((graph) => graph.destroy());
+        return !row.length;
+      }
+    ),
   },
 
   Graph: {

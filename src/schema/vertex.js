@@ -2,7 +2,6 @@ const { gql } = require("apollo-server-express");
 
 const vertexSchema = gql`
   extend type Query {
-    allVertices: [Vertex!]
     vertex(id: ID!): Vertex
   }
 

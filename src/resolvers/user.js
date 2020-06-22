@@ -3,9 +3,12 @@ const {
   UserInputError,
   AuthenticationError,
 } = require("apollo-server-express");
+const { combineResolvers } = require("graphql-resolvers");
+const { isAuthenticated } = require("./authorization");
 
 const createToken = async (user, secret, expiresIn) => {
   const { id, email } = user;
+  console.log(`id: ${id}, email: ${email}`);
   return await jwt.sign({ id, email }, secret, { expiresIn });
 };
 
@@ -26,12 +29,14 @@ const userResolvers = {
       { firstName, lastName, email, password },
       { models, secret }
     ) {
-      const user = models.user.create({
-        firstName,
-        lastName,
-        email,
-        password,
-      });
+      const user = await models.user
+        .create({
+          firstName,
+          lastName,
+          email,
+          password,
+        })
+        .then((user) => user.get({ plain: true }));
 
       return { token: createToken(user, secret, "1h") };
     },
@@ -52,14 +57,22 @@ const userResolvers = {
       return { token: createToken(user, secret, "1h") };
     },
 
-    async updateEmail(root, { id, email }, { models }) {
-      return models.user.findByPk(id).then((user) => user.update({ email }));
-    },
+    updateEmail: combineResolvers(
+      isAuthenticated,
+      async (root, { email }, { models, me }) => {
+        return models.user
+          .findByPk(me.id)
+          .then((user) => user.update({ email }));
+      }
+    ),
 
-    async deleteUser(root, { id }, { models }) {
-      const row = models.user.findByPk(id).then((user) => user.destroy());
-      return !row.length;
-    },
+    deleteUser: combineResolvers(
+      isAuthenticated,
+      async (root, { models, me }) => {
+        const row = models.user.findByPk(me.id).then((user) => user.destroy());
+        return !row.length;
+      }
+    ),
   },
 
   User: {

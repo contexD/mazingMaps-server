@@ -7,7 +7,7 @@ const graphSchema = gql`
   }
 
   extend type Mutation {
-    createGraph(name: String!, userId: ID!): Graph!
+    createGraph(name: String!): Graph!
     updateGraphName(id: ID!, name: String!): Graph!
     deleteGraph(id: ID!): Boolean!
   }
