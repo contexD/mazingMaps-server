@@ -2,7 +2,9 @@ const { ForbiddenError } = require("apollo-server-express");
 const { skip } = require("graphql-resolvers");
 
 const isAuthenticated = (root, args, { me }) =>
-  me ? skip : new ForbiddenError("Not authenticated as user.");
+  me
+    ? skip
+    : new ForbiddenError("Not authenticated as user. Please sign in again.");
 
 const isGraphOwner = async (root, { id, graphId }, { models, me }) => {
   /* determine whether isGraphOwner was invoked 

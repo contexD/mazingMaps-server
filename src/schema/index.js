@@ -4,6 +4,7 @@ const userSchema = require("./user");
 const graphSchema = require("./graph");
 const vertexSchema = require("./vertex");
 const edgeSchema = require("./edge");
+const responseSchema = require("./responseSchema");
 
 const linkSchema = gql`
   type Query {
@@ -25,4 +26,5 @@ module.exports = [
   graphSchema,
   vertexSchema,
   edgeSchema,
+  responseSchema,
 ];

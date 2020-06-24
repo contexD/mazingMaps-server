@@ -5,11 +5,20 @@ const {
 } = require("apollo-server-express");
 const { combineResolvers } = require("graphql-resolvers");
 const { isAuthenticated } = require("./authorization");
+const { response } = require("express");
+
+function Response(message = "", code = 200, success = true) {
+  this.code = code;
+  this.success = success;
+  this.message = message;
+}
 
 const createToken = async (user, secret, expiresIn) => {
-  const { id, email } = user;
+  const { id, email, firstName, lastName } = user;
   console.log(`id: ${id}, email: ${email}`);
-  return await jwt.sign({ id, email }, secret, { expiresIn });
+  return await jwt.sign({ id, email, firstName, lastName }, secret, {
+    expiresIn,
+  });
 };
 
 const userResolvers = {
@@ -38,23 +47,33 @@ const userResolvers = {
         })
         .then((user) => user.get({ plain: true }));
 
-      return { token: createToken(user, secret, "1h") };
+      const res = !user
+        ? new Response("New user could not be signed up.", 400, false)
+        : new Response("New user signed up.");
+
+      return { ...res, token: { jwt: createToken(user, secret, "1h") } };
     },
 
     async signIn(root, { login, password }, { models, secret }) {
       const user = await models.user.findByLogin(login);
 
-      if (!user) {
-        throw new UserInputError("No user found with these login credentials.");
-      }
-
       const isValid = await user.validatePassword(password);
 
-      if (!isValid) {
-        throw new AuthenticationError("Invalid password.");
+      if (!user) {
+        const res = new Response(
+          "No user found with these login credentials.",
+          400,
+          false
+        );
+        return { ...res, token: { jwt: "" } };
+      } else if (!isValid) {
+        const res = new Response("Invalid password.", 400, false);
+        return { ...res, token: { jwt: "" } };
+      } else {
+        const res = new Response("Successful login.");
+        const token = await createToken(user, secret, "1h");
+        return { ...res, token: { jwt: token } };
       }
-
-      return { token: createToken(user, secret, "1h") };
     },
 
     updateEmail: combineResolvers(

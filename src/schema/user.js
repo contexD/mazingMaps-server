@@ -13,14 +13,14 @@ const userSchema = gql`
       firstName: String!
       lastName: String!
       password: String!
-    ): Token!
-    signIn(login: String!, password: String!): Token!
-    updateEmail(email: String!): User!
-    deleteUser: Boolean!
+    ): SignUpResponse!
+    signIn(login: String!, password: String!): SignInResponse!
+    updateEmail(email: String!): updateEmailResponse!
+    deleteUser: deleteUserResponse!
   }
 
   type Token {
-    token: String!
+    jwt: String!
   }
 
   type User {
@@ -29,6 +29,34 @@ const userSchema = gql`
     firstName: String!
     lastName: String!
     graphs: [Graph!]
+  }
+
+  type SignUpResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    token: Token
+  }
+
+  type SignInResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    token: Token
+  }
+
+  type updateEmailResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    user: User!
+  }
+
+  type deleteUserResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    user: User!
   }
 `;
 
