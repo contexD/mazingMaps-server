@@ -49,14 +49,14 @@ const userSchema = gql`
     code: String!
     success: Boolean!
     message: String!
-    user: User!
+    user: User
   }
 
   type deleteUserResponse implements MutationResponse {
     code: String!
     success: Boolean!
     message: String!
-    user: User!
+    user: User
   }
 `;
 

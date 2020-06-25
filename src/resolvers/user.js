@@ -1,25 +1,4 @@
-const jwt = require("jsonwebtoken");
-const {
-  UserInputError,
-  AuthenticationError,
-} = require("apollo-server-express");
-const { combineResolvers } = require("graphql-resolvers");
-const { isAuthenticated } = require("./authorization");
-const { response } = require("express");
-
-function Response(message = "", code = 200, success = true) {
-  this.code = code;
-  this.success = success;
-  this.message = message;
-}
-
-const createToken = async (user, secret, expiresIn) => {
-  const { id, email, firstName, lastName } = user;
-  console.log(`id: ${id}, email: ${email}`);
-  return await jwt.sign({ id, email, firstName, lastName }, secret, {
-    expiresIn,
-  });
-};
+const { isAuthenticated, Response, createToken } = require("../utils/");
 
 const userResolvers = {
   Query: {
@@ -76,22 +55,43 @@ const userResolvers = {
       }
     },
 
-    updateEmail: combineResolvers(
-      isAuthenticated,
-      async (root, { email }, { models, me }) => {
-        return models.user
+    async updateEmail(root, { email }, { models, me }) {
+      if (!isAuthenticated(me)) {
+        const res = new Response(
+          "Not logged in. To change your email, log in.",
+          403,
+          false
+        );
+        return { ...res, user: null };
+      } else {
+        const res = new Response("Email updated.");
+        const updatedUser = await models.user
           .findByPk(me.id)
           .then((user) => user.update({ email }));
+        return { ...res, user: updatedUser };
       }
-    ),
+    },
 
-    deleteUser: combineResolvers(
-      isAuthenticated,
-      async (root, { models, me }) => {
-        const row = models.user.findByPk(me.id).then((user) => user.destroy());
-        return !row.length;
+    async deleteUser(root, _, { models, me }) {
+      if (!isAuthenticated(me)) {
+        const res = new Response(
+          "Not logged in. To delete your account, please sign in",
+          403,
+          false
+        );
+        return { ...res, user: null };
+      } else {
+        const deletedUser = await models.user.findByPk(me.id);
+        const row = deletedUser.destroy();
+        if (!row.length) {
+          const res = new Response("User deleted");
+          return { ...res, user: deletedUser };
+        } else {
+          const res = new Response("User could not be deleted", 500, false);
+          return { ...res, user: null };
+        }
       }
-    ),
+    },
   },
 
   User: {

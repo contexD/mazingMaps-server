@@ -6,9 +6,9 @@ const vertexSchema = gql`
   }
 
   extend type Mutation {
-    createVertex(data: String!, graphId: ID!): Vertex!
-    updateVertexData(id: ID!, data: String!): Vertex!
-    deleteVertex(id: ID!): Boolean!
+    createVertex(data: String!, graphId: ID!): VertexMutationResponse!
+    updateVertexData(id: ID!, data: String!): VertexMutationResponse!
+    deleteVertex(id: ID!): VertexMutationResponse!
   }
 
   type Vertex {
@@ -16,6 +16,13 @@ const vertexSchema = gql`
     data: String!
     targets: [Vertex!]
     graph: Graph!
+  }
+
+  type VertexMutationResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    vertex: Vertex
   }
 `;
 

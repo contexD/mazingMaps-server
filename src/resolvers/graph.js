@@ -1,18 +1,22 @@
 const { combineResolvers } = require("graphql-resolvers");
-const { isAuthenticated, isGraphOwner } = require("./authorization");
+const {
+  isAuthenticated: isAuthenticatedResolver,
+  isGraphOwner: isGraphOwnerResolver,
+} = require("./authorization");
+const { isAuthenticated, isGraphOwner, Response } = require("../utils/");
 
 const graphResolvers = {
   Query: {
     allGraphs: combineResolvers(
-      isAuthenticated,
+      isAuthenticatedResolver,
       async (root, args, { models, me }) => {
         return models.graph.findAll({ where: { userId: me.id } });
       }
     ),
 
     graph: combineResolvers(
-      isAuthenticated,
-      isGraphOwner,
+      isAuthenticatedResolver,
+      isGraphOwnerResolver,
       async (root, { id }, { models, me }) => {
         return models.graph.findByPk(id);
       }
@@ -20,34 +24,57 @@ const graphResolvers = {
   },
 
   Mutation: {
-    createGraph: combineResolvers(
-      isAuthenticated,
-      async (root, { name }, { models, me }) => {
-        return models.graph.create({
-          name,
-          userId: me.id,
-        });
+    async createGraph(root, { name }, { models, me }) {
+      if (isAuthenticated(me)) {
+        const res = new Response("Mind-map created");
+        const newGraph = await models.graph
+          .create({
+            name,
+            userId: me.id,
+          })
+          .then((graph) => graph.get({ plain: true }));
+        return { ...res, graph: newGraph };
+      } else {
+        const res = new Response("Mind-map could not be created", 500, false);
+        return { ...res, graph: null };
       }
-    ),
+    },
 
-    updateGraphName: combineResolvers(
-      isAuthenticated,
-      isGraphOwner,
-      async (root, { id, name }, { models }) => {
-        return models.graph
+    async updateGraphName(root, { id, name }, { models, me }) {
+      const checkGraphOwner = await isGraphOwner(id, null, models, me);
+
+      if (!checkGraphOwner) {
+        const res = new Response("You're not the graph owner", 403, false);
+        return { ...res, graph: null };
+      } else if (!isAuthenticated(me)) {
+        const res = new Response("Log in to rename your graphs", 403, false);
+        return { ...res, graph: null };
+      } else {
+        const res = new Response("Graph name updated.");
+        const updatedGraph = await models.graph
           .findByPk(id)
-          .then((graph) => graph.update({ name }));
+          .then((graph) => graph.update({ name }))
+          .then((graph) => graph.get({ plain: true }));
+        return { ...res, graph: updatedGraph };
       }
-    ),
+    },
 
-    deleteGraph: combineResolvers(
-      isAuthenticated,
-      isGraphOwner,
-      async (root, { id }, { models }) => {
-        const row = models.graph.findByPk(id).then((graph) => graph.destroy());
-        return !row.length;
+    async deleteGraph(root, { id }, { models, me }) {
+      const checkGraphOwner = await isGraphOwner(id, null, models, me);
+
+      if (!checkGraphOwner) {
+        const res = new Response("You're not the graph owner", 403, false);
+        return { ...res, graph: null };
+      } else if (!isAuthenticated(me)) {
+        const res = new Response("Log in to delete your graph", 403, false);
+        return { ...res, graph: null };
+      } else {
+        const res = new Response("Graph deleted.");
+        const deletedGraph = await models.graph.findByPk(id);
+        const row = deletedGraph.destroy();
+        return { ...res, graph: deletedGraph };
       }
-    ),
+    },
   },
 
   Graph: {

@@ -1,11 +1,20 @@
 const { combineResolvers } = require("graphql-resolvers");
-const { isAuthenticated, isVertexOwner, isGraphOwner } = require("./authorization");
+const {
+  isAuthenticated: isAuthenticatedResolver,
+  isVertexOwner: isVertexOwnerResolver,
+} = require("./authorization");
+const {
+  isAuthenticated,
+  isGraphOwner,
+  isVertexOwner,
+  Response,
+} = require("../utils/");
 
 const vertexResolvers = {
   Query: {
     vertex: combineResolvers(
-      isAuthenticated,
-      isVertexOwner,
+      isAuthenticatedResolver,
+      isVertexOwnerResolver,
       async (root, { id }, { models, me }) => {
         return models.vertex.findByPk(id);
       }
@@ -13,37 +22,71 @@ const vertexResolvers = {
   },
 
   Mutation: {
-    createVertex: combineResolvers(
-      isAuthenticated,
-      isGraphOwner,
-      async (root, { data, graphId }, { models }) => {
-        return models.vertex.create({
-          data,
-          graphId
-        });
-      }
-    ),
+    async createVertex(root, { data, graphId }, { models, me }) {
+      const checkIsGraphOwner = await isGraphOwner(null, graphId, models, me);
 
-    updateVertexData: combineResolvers(
-      isAuthenticated,
-      isVertexOwner,
-      async (root, { id, data }, { models }) => {
-        return models.vertex
+      if (!isAuthenticated(me)) {
+        const res = new Response("Log in to create new vertices", 403, false);
+        return { ...res, vertex: null };
+      } else if (!checkIsGraphOwner) {
+        const res = new Response(
+          "You're not the owner of this mind-map.",
+          403,
+          false
+        );
+        return { ...res, vertex: null };
+      } else {
+        const res = new Response("Vertex created.");
+        const newVertex = await models.vertex.create({
+          data,
+          graphId,
+        });
+        return { ...res, vertex: newVertex };
+      }
+    },
+
+    async updateVertexData(root, { id, data }, { models, me }) {
+      const checkIsVertexOwner = await isVertexOwner(id, null, models, me);
+
+      if (!isAuthenticated(me)) {
+        const res = new Response("Log in to create new vertices.", 403, false);
+        return { ...res, vertex: null };
+      } else if (!checkIsVertexOwner) {
+        const res = new Response(
+          "You're not the owner of this vertex",
+          403,
+          false
+        );
+        return { ...res, vertex: null };
+      } else {
+        const res = new Response("Vertex data updated.");
+        const updatedVertex = await models.vertex
           .findByPk(id)
           .then((vertex) => vertex.update({ data }));
+        return { ...res, vertex: updatedVertex };
       }
-    ),
+    },
 
-    deleteVertex: combineResolvers(
-      isAuthenticated,
-      isVertexOwner,
-      async (root, { id }, { models }) => {
-        const row = models.vertex
-          .findByPk(id)
-          .then((vertex) => vertex.destroy());
-        return !row.length;
+    async deleteVertex(root, { id }, { models, me }) {
+      const checkIsVertexOwner = await isVertexOwner(id, null, models, me);
+
+      if (!isAuthenticated(me)) {
+        const res = new Response("Log in to delete vertices.", 403, false);
+        return { ...res, vertex: null };
+      } else if (!checkIsVertexOwner) {
+        const res = new Response(
+          "You're not the owner of this vertex",
+          403,
+          false
+        );
+        return { ...res, vertex: null };
+      } else {
+        const res = new Response("Vertex deleted.");
+        const deletedVertex = await models.vertex.findByPk(id);
+        deletedVertex.destroy();
+        return { ...res, vertex: deletedVertex };
       }
-    ),
+    },
   },
 
   Vertex: {

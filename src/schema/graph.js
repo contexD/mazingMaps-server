@@ -7,9 +7,9 @@ const graphSchema = gql`
   }
 
   extend type Mutation {
-    createGraph(name: String!): Graph!
-    updateGraphName(id: ID!, name: String!): Graph!
-    deleteGraph(id: ID!): Boolean!
+    createGraph(name: String!): GraphMutationResponse!
+    updateGraphName(id: ID!, name: String!): GraphMutationResponse!
+    deleteGraph(id: ID!): GraphMutationResponse!
   }
 
   type Graph {
@@ -17,6 +17,13 @@ const graphSchema = gql`
     name: String!
     user: User!
     vertices: [Vertex!]
+  }
+
+  type GraphMutationResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    graph: Graph
   }
 `;
 
