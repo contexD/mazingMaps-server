@@ -4,6 +4,8 @@ module.exports = (sequelize, DataTypes) => {
     "vertex",
     {
       data: { type: DataTypes.TEXT, allowNull: false },
+      x: { type: DataTypes.INTEGER },
+      y: { type: DataTypes.INTEGER },
     },
     {}
   );

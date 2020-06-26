@@ -12,6 +12,12 @@ module.exports = {
         allowNull: false,
         type: Sequelize.TEXT,
       },
+      x: {
+        type: Sequelize.INTEGER,
+      },
+      y: {
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
