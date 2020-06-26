@@ -6,14 +6,22 @@ const vertexSchema = gql`
   }
 
   extend type Mutation {
-    createVertex(data: String!, graphId: ID!): VertexMutationResponse!
+    createVertex(
+      data: String!
+      x: Int
+      y: Int
+      graphId: ID!
+    ): VertexMutationResponse!
     updateVertexData(id: ID!, data: String!): VertexMutationResponse!
+    updateVertexCoordinates(x: Int!, y: Int!): VertexMutationResponse!
     deleteVertex(id: ID!): VertexMutationResponse!
   }
 
   type Vertex {
     id: ID!
     data: String!
+    x: Int
+    y: Int
     targets: [Vertex!]
     graph: Graph!
   }
