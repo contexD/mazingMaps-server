@@ -26,7 +26,7 @@ const graphResolvers = {
   Mutation: {
     async createGraph(root, { name }, { models, me }) {
       if (isAuthenticated(me)) {
-        const res = new Response("Mind-map created");
+        const res = new Response("Mind map created");
         const newGraph = await models.graph
           .create({
             name,
@@ -35,7 +35,7 @@ const graphResolvers = {
           .then((graph) => graph.get({ plain: true }));
         return { ...res, graph: newGraph };
       } else {
-        const res = new Response("Mind-map could not be created", 500, false);
+        const res = new Response("Mind map could not be created", 500, false);
         return { ...res, graph: null };
       }
     },
@@ -44,13 +44,13 @@ const graphResolvers = {
       const checkGraphOwner = await isGraphOwner(id, null, models, me);
 
       if (!checkGraphOwner) {
-        const res = new Response("You're not the graph owner", 403, false);
+        const res = new Response("You're not the mind map owner", 403, false);
         return { ...res, graph: null };
       } else if (!isAuthenticated(me)) {
-        const res = new Response("Log in to rename your graphs", 403, false);
+        const res = new Response("Log in to rename your mind maps", 403, false);
         return { ...res, graph: null };
       } else {
-        const res = new Response("Graph name updated.");
+        const res = new Response("Mind map's name updated");
         const updatedGraph = await models.graph
           .findByPk(id)
           .then((graph) => graph.update({ name }))
@@ -63,13 +63,13 @@ const graphResolvers = {
       const checkGraphOwner = await isGraphOwner(id, null, models, me);
 
       if (!checkGraphOwner) {
-        const res = new Response("You're not the graph owner", 403, false);
+        const res = new Response("You're not the mind map's owner", 403, false);
         return { ...res, graph: null };
       } else if (!isAuthenticated(me)) {
-        const res = new Response("Log in to delete your graph", 403, false);
+        const res = new Response("Log in to delete your mind map", 403, false);
         return { ...res, graph: null };
       } else {
-        const res = new Response("Graph deleted.");
+        const res = new Response("Mind map deleted");
         const deletedGraph = await models.graph.findByPk(id);
         const row = deletedGraph.destroy();
         return { ...res, graph: deletedGraph };

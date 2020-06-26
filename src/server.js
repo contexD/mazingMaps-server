@@ -15,15 +15,11 @@ const resolvers = require("./resolvers/");
 const getMe = async (req) => {
   const token = req.headers["authorization"].split(" ")[1];
 
-  console.log("token", token);
-
   if (token) {
     try {
       const data = await jwt.verify(token, process.env.SECRET);
-      console.log("data", data);
       return data;
     } catch (e) {
-      console.log("e, are you nothin?", e);
       return null;
     }
   }
@@ -34,9 +30,7 @@ const server = new ApolloServer({
   resolvers,
   context: async ({ req }) => {
     const me = await getMe(req);
-
-    console.log("me", me);
-
+    
     return {
       models,
       me,
