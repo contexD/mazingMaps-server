@@ -6,10 +6,10 @@ module.exports = {
       "users",
       [
         {
-          firstName: "test",
-          lastName: "test",
-          email: "test@test.com",
-          password: "abcd",
+          firstName: "max",
+          lastName: "max",
+          email: "max@max.com",
+          password: "$2b$10$kIWpgfB81f8dF8DVQfqI/eJGvX.nAE19CslpYmY0R4eGGhZzYI3Ju",
           createdAt: new Date(),
           updatedAt: new Date(),
         },

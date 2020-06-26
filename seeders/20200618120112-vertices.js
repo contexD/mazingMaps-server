@@ -7,18 +7,24 @@ module.exports = {
       [
         {
           data: "mazingMapper",
+          x: 250,
+          y: 5,
           graphId: 1,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           data: "simple",
+          x: 100,
+          y: 100,
           graphId: 1,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           data: "intuitive",
+          x: 200,
+          y: 200,
           graphId: 1,
           createdAt: new Date(),
           updatedAt: new Date(),

@@ -18,14 +18,14 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          sourceId: 3,
-          targetId: 4,
+          sourceId: 4,
+          targetId: 5,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          sourceId: 3,
-          targetId: 5,
+          sourceId: 4,
+          targetId: 6,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
