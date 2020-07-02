@@ -12,8 +12,7 @@ const isAuthenticated = (root, args, { me }) =>
 const isGraphOwner = async (root, { id, graphId }, { models, me }) => {
   /* determine whether isGraphOwner was invoked 
   in graphResolvers or vertexResolvers and find id */
-  //console.log(`id: ${id} \n graphId: ${graphId}`);
-  const actualId = id ? id : graphId;
+  const actualId = id || graphId;
 
   const { id: graphOwnerId } = await models.graph
     .findByPk(actualId)

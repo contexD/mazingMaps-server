@@ -21,10 +21,7 @@ const isGraphOwner = async (id, graphId, models, me) => {
     .then((graph) => graph.getUser())
     .then((user) => user.get({ plain: true }));
 
-  if (graphOwnerId !== me.id) {
-    return false;
-  }
-  return true;
+  return graphOwnerId !== me.id;
 };
 
 const isVertexOwner = async (id, sourceId, models, me) => {
@@ -38,10 +35,7 @@ const isVertexOwner = async (id, sourceId, models, me) => {
     .then((graph) => graph.getUser())
     .then((user) => user.get({ plain: true }));
 
-  if (vertexOwnerId !== me.id) {
-    return false;
-  }
-  return true;
+  return vertexOwnerId !== me.id;
 };
 
 function Response(message = "", code = 200, success = true) {
