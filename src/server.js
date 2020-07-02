@@ -1,16 +1,15 @@
+require("dotenv/config");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-require("dotenv/config");
 const express = require("express");
 const { ApolloServer, AuthenticationError } = require("apollo-server-express");
 const models = require("../models");
+const typeDefs = require("./schema/");
+const resolvers = require("./resolvers/");
 
 const app = express();
 const port = 4000;
 app.use(cors());
-
-const typeDefs = require("./schema/");
-const resolvers = require("./resolvers/");
 
 const getMe = async (req) => {
   const token = req.headers["authorization"].split(" ")[1];
