@@ -36,8 +36,6 @@ const userResolvers = {
     async signIn(root, { login, password }, { models, secret }) {
       const user = await models.user.findByLogin(login);
 
-      const isValid = await user.validatePassword(password);
-
       if (!user) {
         const res = new Response(
           "No user found with these login credentials.",
@@ -45,13 +43,17 @@ const userResolvers = {
           false
         );
         return { ...res, token: { jwt: "" } };
-      } else if (!isValid) {
-        const res = new Response("Invalid password.", 400, false);
-        return { ...res, token: { jwt: "" } };
       } else {
-        const res = new Response("Successful login.");
-        const token = await createToken(user, secret, "1h");
-        return { ...res, token: { jwt: token } };
+        const isValid = await user.validatePassword(password);
+
+        if (!isValid) {
+          const res = new Response("Invalid password.", 400, false);
+          return { ...res, token: { jwt: "" } };
+        } else {
+          const res = new Response("Successful login.");
+          const token = await createToken(user, secret, "1h");
+          return { ...res, token: { jwt: token } };
+        }
       }
     },
 
