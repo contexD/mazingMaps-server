@@ -14,28 +14,28 @@ const isAuthenticated = (id) => {
 const isGraphOwner = async (id, graphId, models, me) => {
   /* determine whether isGraphOwner was invoked 
   in graphResolvers or vertexResolvers and find id */
-  const actualId = id ? id : graphId;
+  const actualId = id || graphId;
 
   const { id: graphOwnerId } = await models.graph
     .findByPk(actualId)
     .then((graph) => graph.getUser())
     .then((user) => user.get({ plain: true }));
 
-  return graphOwnerId !== me.id;
+  return graphOwnerId === me.id;
 };
 
 const isVertexOwner = async (id, sourceId, models, me) => {
   /* determine whether isVertexOwner was invoked 
   in vertexResolvers or edgeResolvers and find id */
+  const actualId = id || sourceId;
 
-  const actualId = id ? id : sourceId;
   const { id: vertexOwnerId } = await models.vertex
     .findByPk(actualId)
     .then((vertex) => vertex.getGraph())
     .then((graph) => graph.getUser())
     .then((user) => user.get({ plain: true }));
 
-  return vertexOwnerId !== me.id;
+  return vertexOwnerId === me.id;
 };
 
 function Response(message = "", code = 200, success = true) {
