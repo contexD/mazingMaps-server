@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     "vertex",
     {
       data: { type: DataTypes.TEXT, allowNull: false },
+      type: {type: DataTypes.STRING, allowNull: false, defaultValue: "inputNode"},
       x: { type: DataTypes.INTEGER },
       y: { type: DataTypes.INTEGER },
     },
