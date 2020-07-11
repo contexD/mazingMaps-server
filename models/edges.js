@@ -3,8 +3,8 @@ module.exports = (sequelize, DataTypes) => {
   const edges = sequelize.define(
     "edges",
     {
-      sourceId: { type: DataTypes.INTEGER, allowNull: false },
-      targetId: { type: DataTypes.INTEGER, allowNull: false },
+      source: { type: DataTypes.STRING, allowNull: false },
+      target: { type: DataTypes.STRING, allowNull: false },
     },
     {}
   );
