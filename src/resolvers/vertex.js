@@ -22,7 +22,7 @@ const vertexResolvers = {
   },
 
   Mutation: {
-    async createVertex(root, { data, x, y, graphId }, { models, me }) {
+    async createVertex(root, { data, type, x, y, graphId }, { models, me }) {
       const checkIsGraphOwner = await isGraphOwner(null, graphId, models, me);
 
       if (!isAuthenticated(me)) {
@@ -41,6 +41,7 @@ const vertexResolvers = {
           data,
           x,
           y,
+          type,
           graphId,
         });
         return { ...res, vertex: newVertex };

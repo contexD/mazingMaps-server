@@ -10,6 +10,7 @@ const vertexSchema = gql`
       data: String!
       x: Int
       y: Int
+      type: String!
       graphId: ID!
     ): VertexMutationResponse!
     updateVertexData(id: ID!, data: String!): VertexMutationResponse!
@@ -20,6 +21,7 @@ const vertexSchema = gql`
   type Vertex {
     id: ID!
     data: String!
+    type: String!
     x: Int
     y: Int
     targets: [Vertex!]

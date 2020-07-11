@@ -3,9 +3,13 @@ module.exports = (sequelize, DataTypes) => {
   const vertex = sequelize.define(
     "vertex",
     {
-      data: { type: DataTypes.TEXT, allowNull: false },
-      x: { type: DataTypes.INTEGER },
-      y: { type: DataTypes.INTEGER },
+      data: { type: DataTypes.JSON, allowNull: false },
+      type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "inputNode",
+      },
+      position: { type: DataTypes.JSON },
     },
     {}
   );
@@ -14,14 +18,14 @@ module.exports = (sequelize, DataTypes) => {
     vertex.belongsToMany(models.vertex, {
       as: "targets",
       through: "edges",
-      foreignKey: "sourceId",
-      otherKey: "targetId",
+      foreignKey: "source",
+      otherKey: "target",
     });
     vertex.belongsToMany(models.vertex, {
       as: "sources",
       through: "edges",
-      foreignKey: "targetId",
-      otherKey: "sourceId",
+      foreignKey: "target",
+      otherKey: "source",
     });
   };
   return vertex;
