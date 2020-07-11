@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       source: { type: DataTypes.STRING, allowNull: false },
       target: { type: DataTypes.STRING, allowNull: false },
+      animated: { type: DataTypes.BOOLEAN, defaultValue: true },
     },
     {}
   );
