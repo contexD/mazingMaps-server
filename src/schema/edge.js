@@ -8,8 +8,8 @@ const edgeSchema = gql`
 
   type Edge {
     id: String!
-    source: Vertex!
-    target: Vertex!
+    source: ID!
+    target: ID!
     animated: Boolean
   }
 
