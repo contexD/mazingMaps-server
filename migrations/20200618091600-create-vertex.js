@@ -6,7 +6,7 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
         autoIncrement: true,
-        type: Sequelize.Integer,
+        type: Sequelize.DataTypes.INTEGER,
       },
       data: {
         allowNull: false,
@@ -14,7 +14,7 @@ module.exports = {
       },
       type: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.DataTypes.STRING,
         defaultValue: "inputNode",
       },
       position: {
