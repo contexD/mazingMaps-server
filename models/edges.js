@@ -3,8 +3,6 @@ module.exports = (sequelize, DataTypes) => {
   const edges = sequelize.define(
     "edges",
     {
-      source: { type: DataTypes.STRING, allowNull: false },
-      target: { type: DataTypes.STRING, allowNull: false },
       animated: { type: DataTypes.BOOLEAN, defaultValue: true },
     },
     {}
