@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 
+const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
+
 const createToken = async (user, secret, expiresIn) => {
   const { id, email, firstName, lastName } = user;
   return await jwt.sign({ id, email, firstName, lastName }, secret, {
@@ -44,10 +46,16 @@ function Response(message = "", code = 200, success = true) {
   this.message = message;
 }
 
+function formatVertex(vertex) {
+  vertex.id.toString;
+  return vertex;
+}
+
 module.exports = {
   createToken,
   isAuthenticated,
   isGraphOwner,
   isVertexOwner,
   Response,
+  formatVertex,
 };

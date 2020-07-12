@@ -7,9 +7,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.STRING,
       },
-      source: {
+      sourceId: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         references: {
           model: "vertices",
           key: "id",
@@ -17,9 +17,9 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      target: {
+      targetId: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         references: {
           model: "vertices",
           key: "id",

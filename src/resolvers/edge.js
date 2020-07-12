@@ -21,20 +21,33 @@ const edgeResolvers = {
         return { ...res, edge: null };
       } else {
         const res = new Response("New edge created");
+        const id = `e${sourceId}-${targetId}`;
         const newEdge = await models.edges
           .create({
+            id,
             sourceId,
             targetId,
           })
           .then((edge) => {
-            return { source: edge.getSource(), target: edge.getTarget() };
+            const { id, animated } = edge.get({ plain: true });
+            return {
+              id,
+              source: edge.getSource(),
+              target: edge.getTarget(),
+              animated,
+            };
           });
         return { ...res, edge: newEdge };
       }
     },
 
-    async deleteEdge(root, { sourceId, targetId }, { models, me }) {
-      const checkVertexOwner = await isVertexOwner(null, sourceId, models, me);
+    async deleteEdge(root, { id }, { models, me }) {
+      const checkVertexOwner = await isVertexOwner(
+        null,
+        id.split("")[1],
+        models,
+        me
+      );
 
       if (!isAuthenticated(me)) {
         const res = new Response(
@@ -53,12 +66,17 @@ const edgeResolvers = {
       } else {
         const res = new Response("Edge deleted");
         //get the edge to be returned
-        const deletedEdge = await models.edges.findOne({
-          where: { sourceId, targetId },
-        }).then(edge => ({source: edge.getSource(), target: edge.getTarget()}));
+        const deletedEdge = await models.edges.findByPk(id).then((edge) => {
+          const { id, animated } = edge.get({ plain: true });
+          return {
+            id,
+            source: edge.getSource(),
+            target: edge.getTarget(),
+            animated,
+          };
+        });
         //get edge instance for deletion
-        const edge = await models.edges.findOne({
-          where: { sourceId, targetId }});
+        const edge = await models.edges.findByPk(id);
         edge.destroy();
         return { ...res, edge: deletedEdge };
       }

@@ -18,14 +18,14 @@ module.exports = (sequelize, DataTypes) => {
     vertex.belongsToMany(models.vertex, {
       as: "targets",
       through: "edges",
-      foreignKey: "source",
-      otherKey: "target",
+      foreignKey: "sourceId",
+      otherKey: "targetId",
     });
     vertex.belongsToMany(models.vertex, {
       as: "sources",
       through: "edges",
-      foreignKey: "target",
-      otherKey: "source",
+      foreignKey: "targetId",
+      otherKey: "sourceId",
     });
   };
   return vertex;
