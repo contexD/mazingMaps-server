@@ -4,9 +4,9 @@ module.exports = {
     return queryInterface.createTable("vertices", {
       id: {
         allowNull: false,
-        primaryKey: true,
         autoIncrement: true,
-        type: Sequelize.DataTypes.INTEGER,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
       },
       data: {
         allowNull: false,
@@ -14,7 +14,7 @@ module.exports = {
       },
       type: {
         allowNull: false,
-        type: Sequelize.DataTypes.STRING,
+        type: Sequelize.STRING,
         defaultValue: "inputNode",
       },
       position: {
