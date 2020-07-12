@@ -1,4 +1,9 @@
-const { isAuthenticated, isVertexOwner, Response } = require("../utils/");
+const {
+  isAuthenticated,
+  isVertexOwner,
+  Response,
+  formatEdge,
+} = require("../utils/");
 
 const edgeResolvers = {
   Mutation: {
@@ -28,15 +33,7 @@ const edgeResolvers = {
             sourceId,
             targetId,
           })
-          .then((edge) => {
-            const { id, animated } = edge.get({ plain: true });
-            return {
-              id,
-              source: edge.getSource(),
-              target: edge.getTarget(),
-              animated,
-            };
-          });
+          .then((edge) => formatEdge(edge));
         return { ...res, edge: newEdge };
       }
     },
@@ -66,15 +63,9 @@ const edgeResolvers = {
       } else {
         const res = new Response("Edge deleted");
         //get the edge to be returned
-        const deletedEdge = await models.edges.findByPk(id).then((edge) => {
-          const { id, animated } = edge.get({ plain: true });
-          return {
-            id,
-            source: edge.getSource(),
-            target: edge.getTarget(),
-            animated,
-          };
-        });
+        const deletedEdge = await models.edges
+          .findByPk(id)
+          .then((edge) => formatEdge(edge));
         //get edge instance for deletion
         const edge = await models.edges.findByPk(id);
         edge.destroy();

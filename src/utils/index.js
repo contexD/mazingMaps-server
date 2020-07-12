@@ -51,6 +51,13 @@ function formatVertex(vertex) {
   return vertex;
 }
 
+function formatEdge(edge) {
+  const { id, animated, sourceId: source, targetId: target } = edge.get({
+    plain: true,
+  });
+  return { id, animated, source, target };
+}
+
 module.exports = {
   createToken,
   isAuthenticated,
@@ -58,4 +65,5 @@ module.exports = {
   isVertexOwner,
   Response,
   formatVertex,
+  formatEdge,
 };
