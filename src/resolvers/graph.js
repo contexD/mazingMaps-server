@@ -4,6 +4,7 @@ const {
   isGraphOwner: isGraphOwnerResolver,
 } = require("./authorization");
 const { isAuthenticated, isGraphOwner, Response } = require("../utils/");
+const edges = require("../../models/edges");
 
 const graphResolvers = {
   Query: {
@@ -83,6 +84,37 @@ const graphResolvers = {
     },
     async vertices(graph) {
       return graph.getVertices();
+    },
+    async edges(graph, _args, { models }) {
+      const vertices = await graph.getVertices();
+      const vertexIDs = [];
+      let edges = [];
+      //get IDs of vertices
+      for (let vertex in vertices) {
+        const { id } = vertices[vertex].get({ plain: true });
+        vertexIDs.push(id);
+      }
+      //get edges for each vertex
+      for (let id in vertexIDs) {
+        const vertexEdges = await models.edges
+          .findAll({
+            where: { sourceId: vertexIDs[id] },
+          })
+          .then((edges) =>
+            edges.map((edge) => {
+              //format edges
+              const { id, animated } = edge.get({ plain: true });
+              return {
+                id,
+                source: edge.getSource(),
+                target: edge.getTarget(),
+                animated,
+              };
+            })
+          );
+        edges.push(...vertexEdges);
+      }
+      return edges;
     },
   },
 };
