@@ -9,7 +9,7 @@ module.exports = {
       },
       source: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         references: {
           model: "vertices",
           key: "id",
@@ -19,7 +19,7 @@ module.exports = {
       },
       target: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         references: {
           model: "vertices",
           key: "id",
