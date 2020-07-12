@@ -17,6 +17,7 @@ const graphSchema = gql`
     name: String!
     user: User!
     vertices: [Vertex!]
+    edges: [Edge!]
   }
 
   type GraphMutationResponse implements MutationResponse {
