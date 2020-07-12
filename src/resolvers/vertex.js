@@ -8,6 +8,7 @@ const {
   isGraphOwner,
   isVertexOwner,
   Response,
+  formatVertex,
 } = require("../utils/");
 
 const vertexResolvers = {
@@ -16,13 +17,19 @@ const vertexResolvers = {
       isAuthenticatedResolver,
       isVertexOwnerResolver,
       async (root, { id }, { models, me }) => {
-        return models.vertex.findByPk(id);
+        return models.vertex
+          .findByPk(id)
+          .then((vertex) => formatVertex(vertex));
       }
     ),
   },
 
   Mutation: {
-    async createVertex(root, { data, type, x, y, graphId }, { models, me }) {
+    async createVertex(
+      root,
+      { data, type, position, graphId },
+      { models, me }
+    ) {
       const checkIsGraphOwner = await isGraphOwner(null, graphId, models, me);
 
       if (!isAuthenticated(me)) {
@@ -37,14 +44,18 @@ const vertexResolvers = {
         return { ...res, vertex: null };
       } else {
         const res = new Response("Vertex created.");
-        const newVertex = await models.vertex.create({
-          data,
-          x,
-          y,
-          type,
-          graphId,
-        });
-        return { ...res, vertex: newVertex };
+        const newVertex = await models.vertex
+          .create({
+            data,
+            type,
+            position,
+            graphId,
+          })
+          .then((newVertex) => formatVertex(newVertex));
+        return {
+          ...res,
+          vertex: newVertex,
+        };
       }
     },
 
@@ -63,14 +74,15 @@ const vertexResolvers = {
         return { ...res, vertex: null };
       } else {
         const res = new Response("Vertex data updated.");
-        const updatedVertex = await models.vertex
+        let updatedVertex = await models.vertex
           .findByPk(id)
-          .then((vertex) => vertex.update({ data }));
+          .then((vertex) => vertex.update({ data }))
+          .then((updatedVertex) => formatVertex(updatedVertex));
         return { ...res, vertex: updatedVertex };
       }
     },
 
-    async updateVertexCoordinates(root, { id, x, y }, { models, me }) {
+    async updateVertexPosition(root, { id, position }, { models, me }) {
       const checkIsVertexOwner = await isVertexOwner(id, null, models, me);
 
       if (!isAuthenticated(me)) {
@@ -84,10 +96,11 @@ const vertexResolvers = {
         );
         return { ...res, vertex: null };
       } else {
-        const res = new Response("Vertex coordinates updated.");
-        const updatedVertex = await models.vertex
+        const res = new Response("Vertex position updated.");
+        let updatedVertex = await models.vertex
           .findByPk(id)
-          .then((vertex) => vertex.update({ x, y }));
+          .then((vertex) => vertex.update({ position }))
+          .then((updatedVertex) => formatVertex(updatedVertex));
         return { ...res, vertex: updatedVertex };
       }
     },
@@ -109,6 +122,7 @@ const vertexResolvers = {
         const res = new Response("Vertex deleted.");
         const deletedVertex = await models.vertex.findByPk(id);
         deletedVertex.destroy();
+        deletedVertex.id.toString();
         return { ...res, vertex: deletedVertex };
       }
     },
