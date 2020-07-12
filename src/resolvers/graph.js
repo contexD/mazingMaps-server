@@ -3,7 +3,12 @@ const {
   isAuthenticated: isAuthenticatedResolver,
   isGraphOwner: isGraphOwnerResolver,
 } = require("./authorization");
-const { isAuthenticated, isGraphOwner, Response } = require("../utils/");
+const {
+  isAuthenticated,
+  isGraphOwner,
+  Response,
+  formatEdge,
+} = require("../utils/");
 const edges = require("../../models/edges");
 
 const graphResolvers = {
@@ -100,18 +105,7 @@ const graphResolvers = {
           .findAll({
             where: { sourceId: vertexIDs[id] },
           })
-          .then((edges) =>
-            edges.map((edge) => {
-              //format edges
-              const { id, animated } = edge.get({ plain: true });
-              return {
-                id,
-                source: edge.getSource(),
-                target: edge.getTarget(),
-                animated,
-              };
-            })
-          );
+          .then((edges) => edges.map((edge) => formatEdge(edge)));
         edges.push(...vertexEdges);
       }
       return edges;
