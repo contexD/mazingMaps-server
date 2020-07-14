@@ -38,13 +38,13 @@ const vertexSchema = gql`
   }
 
   type Coordinates {
-    x: Int
-    y: Int
+    x: Float
+    y: Float
   }
 
   input CoordinatesInput {
-    x: Int
-    y: Int
+    x: Float
+    y: Float
   }
 
   type VertexMutationResponse implements MutationResponse {
