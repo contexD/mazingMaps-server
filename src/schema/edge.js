@@ -3,7 +3,7 @@ const { gql } = require("apollo-server-express");
 const edgeSchema = gql`
   extend type Mutation {
     createEdge(sourceId: ID!, targetId: ID!): EdgeMutationResponse!
-    deleteEdge(id: ID!): EdgeMutationResponse!
+    deleteEdge(id: String!): EdgeMutationResponse!
   }
 
   type Edge {
