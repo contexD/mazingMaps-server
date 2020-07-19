@@ -39,12 +39,8 @@ const edgeResolvers = {
     },
 
     async deleteEdge(root, { id }, { models, me }) {
-      const checkVertexOwner = await isVertexOwner(
-        null,
-        id.split("")[1],
-        models,
-        me
-      );
+      const sourceId = id.match(/e(\d+)/)[1];
+      const checkVertexOwner = await isVertexOwner(null, sourceId, models, me);
 
       if (!isAuthenticated(me)) {
         const res = new Response(
