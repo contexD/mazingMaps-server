@@ -9,7 +9,7 @@
     "initdev": "npm run migrate && npm run seed",
     "migrate": "npx sequelize-cli db:migrate",
     "seed": "npx sequelize-cli db:seed:all",
-    "start": "node server.js"
+    "start": "node ./src/server.js"
   },
   "keywords": [],
   "author": "",
