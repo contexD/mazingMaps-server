@@ -8,7 +8,7 @@ const typeDefs = require("./schema/");
 const resolvers = require("./resolvers/");
 
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;
 app.use(cors());
 
 const getMe = async (req) => {
@@ -29,7 +29,7 @@ const server = new ApolloServer({
   resolvers,
   context: async ({ req }) => {
     const me = await getMe(req);
-    
+
     return {
       models,
       me,
